@@ -1,0 +1,12 @@
+ruff
+tox
+nodeenv
+streamlit
+pandas
+plotly
+anthropic
+httpx
+python-dotenv
+fastapi
+uvicorn[standard]
+jinja2

@@ -1,0 +1,21 @@
+__pycache__
+.lh
+.env
+node_modules
+
+# Python
+*.py[cod]
+*.egg-info/
+
+# Virtual environments
+venv/
+.venv/
+
+# Data
+data/*.csv
+
+# OS
+.DS_Store
+
+# Screenshots (working files, not committed)
+*.jpg
