@@ -15,7 +15,7 @@ def _ensure_embedded_column():
 
 def _chunk(items, size):
     for i in range(0, len(items), size):
-        yield items[i:i + size]
+        yield items[i : i + size]
 
 
 def build_embeddings():
