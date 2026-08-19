@@ -3,7 +3,7 @@ from langchain_core.documents import Document
 from .. import db
 
 
-def _build_description(car):
+def build_description(car):
     market_category_clause = (
         f", in the {car['market_category']} category"
         if car["market_category"] != "Not Specified"
@@ -23,7 +23,7 @@ def _build_description(car):
 
 
 def build_document(car):
-    return Document(page_content=_build_description(car), metadata=car)
+    return Document(page_content=build_description(car), metadata=car)
 
 
 def build_all_documents():
