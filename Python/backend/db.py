@@ -11,7 +11,7 @@ def get_all_cars():
         with conn.cursor() as cur:
             cur.execute("SELECT * FROM cars")
             columns = [desc[0] for desc in cur.description]
-            return [dict(zip(columns, row)) for row in cur.fetchall()]
+            return [dict(zip(columns, row, strict=True)) for row in cur.fetchall()]
 
 
 def get_cars_by_ids(ids):
@@ -21,7 +21,7 @@ def get_cars_by_ids(ids):
         with conn.cursor() as cur:
             cur.execute("SELECT * FROM cars WHERE id = ANY(%s)", (list(ids),))
             columns = [desc[0] for desc in cur.description]
-            return [dict(zip(columns, row)) for row in cur.fetchall()]
+            return [dict(zip(columns, row, strict=True)) for row in cur.fetchall()]
 
 
 def execute(sql, params=None):
@@ -42,4 +42,4 @@ def search_cars(query, limit=8):
         with conn.cursor() as cur:
             cur.execute(sql, (query, query, limit))
             columns = [desc[0] for desc in cur.description]
-            return [dict(zip(columns, row)) for row in cur.fetchall()]
+            return [dict(zip(columns, row, strict=True)) for row in cur.fetchall()]
