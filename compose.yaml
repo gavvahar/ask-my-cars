@@ -40,7 +40,7 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    command: ["python", "-m", "backend.seed_database"]
+    command: ["python", "-m", "scripts.seed_database"]
 
 volumes:
   postgres_data:
