@@ -1,8 +1,8 @@
 import time
 
-from .. import db
-from .documents import build_document
-from .vectorstore import get_vectorstore
+from backend import db
+from backend.rag.documents import build_document
+from backend.rag.vectorstore import get_vectorstore
 
 BATCH_SIZE = 500
 
