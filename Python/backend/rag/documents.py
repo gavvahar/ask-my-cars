@@ -4,11 +4,7 @@ from .. import db
 
 
 def build_description(car):
-    market_category_clause = (
-        f", in the {car['market_category']} category"
-        if car["market_category"] != "Not Specified"
-        else ""
-    )
+    market_category_clause = f", in the {car['market_category']} category" if car["market_category"] != "Not Specified" else ""
 
     return (
         f"The {car['year']} {car['make']} {car['model']} is a "
