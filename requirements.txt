@@ -10,6 +10,7 @@ jinja2
 psycopg[binary]
 psycopg-pool
 langchain-core
+langchain-classic
 langchain-ollama
 langchain-postgres
 sqlalchemy
