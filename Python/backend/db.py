@@ -43,3 +43,26 @@ def search_cars(query, limit=8):
             cur.execute(sql, (query, query, limit))
             columns = [desc[0] for desc in cur.description]
             return [dict(zip(columns, row, strict=True)) for row in cur.fetchall()]
+
+
+CARS_COLUMNS = (
+    "id, make, model, year, engine_fuel_type, engine_hp, engine_cylinders, "
+    "transmission_type, driven_wheels, number_of_doors, market_category, "
+    "vehicle_size, vehicle_style, highway_mpg, city_mpg, popularity, msrp"
+)
+
+
+def get_cars_where_not_embedded():
+    sql = f"SELECT {CARS_COLUMNS} FROM cars WHERE embedded_at IS NULL"
+    with _pool.connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(sql)
+            columns = [desc[0] for desc in cur.description]
+            return [dict(zip(columns, row, strict=True)) for row in cur.fetchall()]
+
+
+def mark_embedded(ids):
+    sql = "UPDATE cars SET embedded_at = NOW() WHERE id = ANY(%s)"
+    with _pool.connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(sql, ([int(i) for i in ids],))
