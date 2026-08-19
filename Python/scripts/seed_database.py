@@ -1,8 +1,7 @@
 import psycopg
 
+from backend.db_config import connection_string
 from data_utils import load_data
-
-from .db_config import connection_string
 
 CREATE_TABLE_SQL = """
 CREATE TABLE IF NOT EXISTS cars (
