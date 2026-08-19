@@ -1,6 +1,6 @@
 from pathlib import Path
 
-import pandas as pd, streamlit as st
+import pandas as pd
 
 COLUMN_RENAME_MAP = {
     "Make": "make",
@@ -38,7 +38,6 @@ MPG_UPPER_BOUND = 100
 DEFAULT_DATA_PATH = Path(__file__).resolve().parent.parent / "data" / "cars.csv"
 
 
-@st.cache_data
 def load_data(path=DEFAULT_DATA_PATH):
     df = pd.read_csv(path)
     df = df.dropna(subset=REQUIRED_COLUMNS)
