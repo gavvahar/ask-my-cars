@@ -22,8 +22,12 @@ def ensure_search_index():
     db.execute("CREATE INDEX IF NOT EXISTS cars_search_vector_idx ON cars USING GIN (search_vector)")
 
 
+def _build_or_query(query):
+    return " OR ".join(query.split())
+
+
 def search(query, k=8):
-    rows = db.search_cars(query, limit=k)
+    rows = db.search_cars(_build_or_query(query), limit=k)
     documents = []
     for row in rows:
         row = dict(row)
@@ -35,5 +39,9 @@ def search(query, k=8):
 if __name__ == "__main__":
     ensure_search_index()
     for document in search("Toyota Corolla"):
+        print(document.page_content)
+        print()
+    print("---")
+    for document in search("Honda good for families"):
         print(document.page_content)
         print()
