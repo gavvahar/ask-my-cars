@@ -5,7 +5,7 @@ from langchain_core.documents import Document
 from langchain_ollama import ChatOllama
 from langgraph.graph import END, StateGraph
 
-from . import prompts
+from . import citations, prompts
 from .retrieval import get_hybrid_retriever
 from .vectorstore import get_vectorstore
 
@@ -24,6 +24,7 @@ GraphState = TypedDict(
         "top_score": Optional[float],
         "answer": str,
         "route": str,
+        "hallucinated_ids": List[str],
     },
 )
 
@@ -73,12 +74,23 @@ def refuse(state):
     return {"answer": response.content, "route": "refuse"}
 
 
+def validate(state):
+    result = citations.validate_citations(state["answer"], state["documents"])
+    if result["hallucinated_ids"]:
+        print(f"WARNING: stripped hallucinated citation(s): {result['hallucinated_ids']}")
+    return {
+        "answer": result["answer"],
+        "hallucinated_ids": result["hallucinated_ids"],
+    }
+
+
 def build_graph():
     graph = StateGraph(GraphState)
 
     graph.add_node("retrieve", retrieve)
     graph.add_node("generate", generate)
     graph.add_node("refuse", refuse)
+    graph.add_node("validate", validate)
 
     graph.set_entry_point("retrieve")
     graph.add_conditional_edges(
@@ -86,8 +98,9 @@ def build_graph():
         should_answer,
         {"generate": "generate", "refuse": "refuse"},
     )
-    graph.add_edge("generate", END)
-    graph.add_edge("refuse", END)
+    graph.add_edge("generate", "validate")
+    graph.add_edge("refuse", "validate")
+    graph.add_edge("validate", END)
 
     return graph.compile()
 
