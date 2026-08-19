@@ -15,10 +15,7 @@ SEARCH_VECTOR_EXPR = """
 
 
 def ensure_search_index():
-    db.execute(
-        f"ALTER TABLE cars ADD COLUMN IF NOT EXISTS search_vector tsvector "
-        f"GENERATED ALWAYS AS ({SEARCH_VECTOR_EXPR}) STORED"
-    )
+    db.execute(f"ALTER TABLE cars ADD COLUMN IF NOT EXISTS search_vector tsvector GENERATED ALWAYS AS ({SEARCH_VECTOR_EXPR}) STORED")
     db.execute("CREATE INDEX IF NOT EXISTS cars_search_vector_idx ON cars USING GIN (search_vector)")
 
 
