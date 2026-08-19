@@ -5,6 +5,11 @@ using ONLY the vehicle information provided below in the context. Do not use any
 and do not invent, assume, or guess at any details (prices, specs, features, or trims) that are not \
 explicitly stated in the context.
 
+If the user states a numeric constraint (price, MPG, HP, number of doors, etc.), check each cited \
+car's actual value against that constraint before claiming it qualifies. Do not round or approximate \
+in the car's favor. If a car is close but does not actually meet the stated constraint, say so \
+honestly (e.g. "slightly over your budget at $35,870") rather than claiming it qualifies.
+
 For every specific vehicle you mention or use as the basis of your answer, cite it immediately using \
 the exact format [Car ID: <id>], using the Car ID exactly as given in the context below. Never invent \
 a Car ID, and never cite a car that is not present in the context.
@@ -28,30 +33,17 @@ rephrasing or broadening their question, without citing any car.
 
 
 def _format_context(documents):
-    return "\n".join(
-        f"[Car ID: {document.metadata['id']}] {document.page_content}"
-        for document in documents
-    )
+    return "\n".join(f"[Car ID: {document.metadata['id']}] {document.page_content}" for document in documents)
 
 
 def build_generation_prompt(question, documents):
     context = _format_context(documents)
-    return (
-        f"{GENERATION_SYSTEM_PROMPT}\n\n"
-        f"Context:\n{context}\n\n"
-        f"Question: {question}\n\n"
-        "Answer:"
-    )
+    return f"{GENERATION_SYSTEM_PROMPT}\n\nContext:\n{context}\n\nQuestion: {question}\n\nAnswer:"
 
 
 def build_refusal_prompt(question, documents):
     context = _format_context(documents)
-    return (
-        f"{REFUSAL_SYSTEM_PROMPT}\n\n"
-        f"Context:\n{context}\n\n"
-        f"Question: {question}\n\n"
-        "Answer:"
-    )
+    return f"{REFUSAL_SYSTEM_PROMPT}\n\nContext:\n{context}\n\nQuestion: {question}\n\nAnswer:"
 
 
 if __name__ == "__main__":

@@ -8,7 +8,11 @@ from fastapi.templating import Jinja2Templates
 
 from .routes import ai_summary, dashboard, filters
 
-BASE_DIR = Path(__file__).resolve().parent
+# main.py sits at Python/backend/main.py -- templates/ and static/ live at the
+# repo root (siblings of Python/), not nested under backend/, so this needs to
+# resolve three levels up regardless of cwd (the Dockerfile runs uvicorn from
+# WORKDIR /app/Python, not the repo root).
+REPO_ROOT = Path(__file__).resolve().parents[2]
 
 load_dotenv()
 
@@ -25,9 +29,9 @@ app.include_router(filters.router)
 app.include_router(dashboard.router)
 app.include_router(ai_summary.router)
 
-app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
+app.mount("/static", StaticFiles(directory=REPO_ROOT / "static"), name="static")
 
-templates = Jinja2Templates(directory=BASE_DIR / "templates")
+templates = Jinja2Templates(directory=REPO_ROOT / "templates")
 
 
 @app.get("/")
