@@ -1,20 +1,8 @@
-import os
-
-from psycopg.conninfo import make_conninfo
 from psycopg_pool import ConnectionPool
 
+from .db_config import connection_string
 
-def _connection_string():
-    return make_conninfo(
-        host=os.environ.get("POSTGRES_HOST", "localhost"),
-        port=os.environ.get("POSTGRES_PORT", "5432"),
-        dbname=os.environ.get("POSTGRES_DB"),
-        user=os.environ.get("POSTGRES_USER"),
-        password=os.environ.get("POSTGRES_PASSWORD"),
-    )
-
-
-_pool = ConnectionPool(conninfo=_connection_string(), open=True)
+_pool = ConnectionPool(conninfo=connection_string(), open=True)
 _pool.wait(timeout=30)
 
 

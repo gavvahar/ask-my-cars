@@ -16,6 +16,10 @@ def embed_texts(texts):
     return _embeddings.embed_documents(texts)
 
 
+def get_embeddings_model():
+    return _embeddings
+
+
 if __name__ == "__main__":
     vector = embed_text("This is a test car description.")
     print(f"Embedding dimension: {len(vector)}")

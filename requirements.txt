@@ -11,3 +11,5 @@ psycopg[binary]
 psycopg-pool
 langchain-core
 langchain-ollama
+langchain-postgres
+sqlalchemy

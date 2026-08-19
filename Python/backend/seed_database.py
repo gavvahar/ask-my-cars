@@ -1,9 +1,8 @@
-import os
-
 import psycopg
-from psycopg.conninfo import make_conninfo
 
 from data_utils import load_data
+
+from .db_config import connection_string
 
 CREATE_TABLE_SQL = """
 CREATE TABLE IF NOT EXISTS cars (
@@ -47,16 +46,6 @@ COLUMNS = [
 ]
 
 
-def _connection_string():
-    return make_conninfo(
-        host=os.environ.get("POSTGRES_HOST", "localhost"),
-        port=os.environ.get("POSTGRES_PORT", "5432"),
-        dbname=os.environ.get("POSTGRES_DB"),
-        user=os.environ.get("POSTGRES_USER"),
-        password=os.environ.get("POSTGRES_PASSWORD"),
-    )
-
-
 def _to_row(record):
     return (
         record["make"],
@@ -81,7 +70,7 @@ def _to_row(record):
 def seed():
     df = load_data()
 
-    with psycopg.connect(_connection_string()) as conn:
+    with psycopg.connect(connection_string()) as conn:
         with conn.cursor() as cur:
             cur.execute(CREATE_TABLE_SQL)
             cur.execute("TRUNCATE TABLE cars RESTART IDENTITY")
