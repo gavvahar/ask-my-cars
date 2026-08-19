@@ -26,10 +26,7 @@ if __name__ == "__main__":
         Document(page_content="Another real car.", metadata={"id": 2}),
     ]
 
-    fake_answer = (
-        "The 2016 Toyota Prius [Car ID: 1] is a great choice. "
-        "You might also like this car [Car ID: 999], which doesn't actually exist in our results."
-    )
+    fake_answer = "The 2016 Toyota Prius [Car ID: 1] is a great choice. You might also like this car [Car ID: 999], which doesn't actually exist in our results."
 
     result = validate_citations(fake_answer, documents)
     print("Cleaned answer:", result["answer"])
