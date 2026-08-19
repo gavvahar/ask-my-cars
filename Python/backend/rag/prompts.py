@@ -33,30 +33,17 @@ rephrasing or broadening their question, without citing any car.
 
 
 def _format_context(documents):
-    return "\n".join(
-        f"[Car ID: {document.metadata['id']}] {document.page_content}"
-        for document in documents
-    )
+    return "\n".join(f"[Car ID: {document.metadata['id']}] {document.page_content}" for document in documents)
 
 
 def build_generation_prompt(question, documents):
     context = _format_context(documents)
-    return (
-        f"{GENERATION_SYSTEM_PROMPT}\n\n"
-        f"Context:\n{context}\n\n"
-        f"Question: {question}\n\n"
-        "Answer:"
-    )
+    return f"{GENERATION_SYSTEM_PROMPT}\n\nContext:\n{context}\n\nQuestion: {question}\n\nAnswer:"
 
 
 def build_refusal_prompt(question, documents):
     context = _format_context(documents)
-    return (
-        f"{REFUSAL_SYSTEM_PROMPT}\n\n"
-        f"Context:\n{context}\n\n"
-        f"Question: {question}\n\n"
-        "Answer:"
-    )
+    return f"{REFUSAL_SYSTEM_PROMPT}\n\nContext:\n{context}\n\nQuestion: {question}\n\nAnswer:"
 
 
 if __name__ == "__main__":
