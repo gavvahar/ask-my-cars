@@ -1,0 +1,113 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: #ffffff;
+  color: #1a1a1a;
+}
+
+.content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.subtitle {
+  color: #667085;
+}
+
+#ask-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+#question-input {
+  flex: 1;
+  padding: 0.6rem 0.75rem;
+  font-family: inherit;
+  font-size: 1rem;
+  border: 1px solid #d0d7de;
+  border-radius: 8px;
+  resize: vertical;
+}
+
+#ask-button {
+  padding: 0.6rem 1.25rem;
+  background: #1a1a1a;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  align-self: flex-start;
+}
+
+#ask-button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+#loading-state {
+  color: #667085;
+  margin-bottom: 1.5rem;
+}
+
+#error-state {
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  color: #991b1b;
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+  margin-bottom: 1.5rem;
+}
+
+#answer-section {
+  margin-bottom: 2rem;
+}
+
+#answer-text {
+  line-height: 1.6;
+}
+
+.citation-badge {
+  display: inline-block;
+  background: #eef2ff;
+  color: #3730a3;
+  border-radius: 6px;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin: 0 0.15rem;
+}
+
+.cars-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.car-card {
+  background: #f8fafc;
+  border: 1px solid #d0d7de;
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+}
+
+.car-card.cited {
+  border-color: #3730a3;
+  box-shadow: 0 0 0 1px #3730a3;
+}
+
+.car-card h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+}
+
+.car-card p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #667085;
+}

@@ -1,6 +1,7 @@
 import psycopg
 
 from backend.db_config import connection_string
+from backend.rag.fts_search import ensure_search_index
 from data_utils import load_data
 
 CREATE_TABLE_SQL = """
@@ -78,6 +79,11 @@ def seed():
             with cur.copy(copy_sql) as copy:
                 for record in df[COLUMNS].to_dict(orient="records"):
                     copy.write_row(_to_row(record))
+
+    # The FTS retriever depends on this generated column existing. Nothing
+    # else in the app's normal startup/request path creates it, so seeding
+    # is the one place guaranteed to run before the app ever serves a query.
+    ensure_search_index()
 
     print(f"Seeded {len(df)} rows into cars.")
 

@@ -3,6 +3,49 @@
   <head>
     <meta charset="utf-8" />
     <title>Ask My Cars</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', path='css/style.css') }}"
+    />
   </head>
-  <body></body>
+  <body>
+    <main class="content">
+      <h1>Ask My Cars</h1>
+      <p class="subtitle">
+        Ask a natural-language question about our car dataset — e.g.
+        "fuel-efficient family SUV under $35k."
+      </p>
+
+      <form id="ask-form">
+        <textarea
+          id="question-input"
+          placeholder="What are you looking for?"
+          rows="2"
+        ></textarea>
+        <button type="submit" id="ask-button">Ask</button>
+      </form>
+
+      <div id="loading-state" style="display: none">
+        Thinking... this can take up to a couple of minutes on our self-hosted
+        setup.
+      </div>
+
+      <div id="answer-section" style="display: none">
+        <h2>Answer</h2>
+        <div id="answer-text"></div>
+      </div>
+
+      <div id="cars-section" style="display: none">
+        <h2>Retrieved Cars</h2>
+        <div id="cars-grid" class="cars-grid"></div>
+      </div>
+
+      <div id="error-state" style="display: none"></div>
+    </main>
+
+    <script
+      type="module"
+      src="{{ url_for('static', path='js/search.js') }}"
+    ></script>
+  </body>
 </html>
