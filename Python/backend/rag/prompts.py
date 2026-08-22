@@ -1,6 +1,13 @@
 from langchain_core.documents import Document
 
-GENERATION_SYSTEM_PROMPT = """You are a helpful car-shopping assistant. Answer the user's question \
+CITATION_INSTRUCTION = """When citing a vehicle, use the exact format [Car ID: <id>] where <id> is a \
+single number copied exactly from the context below — for example [Car ID: 2944]. If multiple cars \
+support a point, cite each one in its own bracket, like [Car ID: 2944][Car ID: 2942] — never combine \
+multiple ids into one bracket like [Car ID: 2944, 2942], and never write anything other than a single \
+number inside the brackets (no names, years, or descriptions). Only cite a Car ID that appears exactly \
+as given in the context below; never invent one."""
+
+GENERATION_SYSTEM_PROMPT = f"""You are a helpful car-shopping assistant. Answer the user's question \
 using ONLY the vehicle information provided below in the context. Do not use any outside knowledge \
 and do not invent, assume, or guess at any details (prices, specs, features, or trims) that are not \
 explicitly stated in the context.
@@ -10,22 +17,21 @@ car's actual value against that constraint before claiming it qualifies. Do not 
 in the car's favor. If a car is close but does not actually meet the stated constraint, say so \
 honestly (e.g. "slightly over your budget at $35,870") rather than claiming it qualifies.
 
-For every specific vehicle you mention or use as the basis of your answer, cite it immediately using \
-the exact format [Car ID: <id>], using the Car ID exactly as given in the context below. Never invent \
-a Car ID, and never cite a car that is not present in the context.
+For every specific vehicle you mention or use as the basis of your answer, cite it immediately. \
+{CITATION_INSTRUCTION}
 
 If the context does not contain enough relevant information to answer the question, say so plainly \
 rather than guessing.
 """
 
-REFUSAL_SYSTEM_PROMPT = """You are a helpful car-shopping assistant. The vehicle information retrieved \
+REFUSAL_SYSTEM_PROMPT = f"""You are a helpful car-shopping assistant. The vehicle information retrieved \
 for this question doesn't confidently match what the user is asking, so a fully confident answer isn't \
 possible. Do not pretend otherwise.
 
 Respond in a friendly, honest tone: briefly explain that you don't have a confident match for their \
 exact question, then — if any of the vehicles below are still loosely relevant — mention them as the \
-closest available options with a clear caveat that they may not fully match what was asked. Use the \
-same citation format as always: [Car ID: <id>], only for cars actually listed below, never invented.
+closest available options with a clear caveat that they may not fully match what was asked. \
+{CITATION_INSTRUCTION}
 
 If none of the vehicles below are even loosely relevant, say so plainly and suggest the user try \
 rephrasing or broadening their question, without citing any car.

@@ -81,7 +81,7 @@ A separate faithfulness class of bug — the model correctly citing a _real_ car
 | #   | Category         | Question                                  | Route    | Retrieval | Faithfulness | Answer Quality | Notes                                                                                         |
 | --- | ---------------- | ----------------------------------------- | -------- | --------- | ------------ | -------------- | --------------------------------------------------------------------------------------------- |
 | 1   | factual          | 2011 BMW 1 Series M specs                 | generate | Good      | Pass         | Good           | Clean, exact match                                                                            |
-| 2   | factual          | Toyota Corolla                            | generate | Good      | Pass*        | Good           | *Citation extraction failed on multi-ID bracket                                               |
+| 2   | factual          | Toyota Corolla                            | generate | Good      | Pass         | Good           | Originally failed multi-ID citation extraction; fixed and re-verified, see Known Limitations  |
 | 3   | factual          | Porsche Carrera GT horsepower             | generate | Good      | Pass         | Good           | Concise, correct (605 HP), well-cited                                                         |
 | 4   | semantic         | reliable family SUV, won't break the bank | generate | Good      | Pass         | Good           | Mitsubishi Outlander, well-cited                                                              |
 | 5   | semantic         | long highway commute                      | refuse   | Adequate  | Pass         | Adequate       | Honest mismatch admission                                                                     |
@@ -89,11 +89,11 @@ A separate faithfulness class of bug — the model correctly citing a _real_ car
 | 7   | semantic         | practical city car, good gas mileage      | generate | Good      | Pass         | Good           | Honda Insight hybrid                                                                          |
 | 8   | semantic         | luxury sedans                             | refuse   | Good      | Pass         | Good           | 5 real matches — arguably should've generated; threshold-tuning candidate                     |
 | 9   | refusal          | electric scooters                         | refuse   | N/A       | Pass         | Good           | Clean refusal                                                                                 |
-| 10  | refusal          | flying cars / teleportation pods          | refuse   | N/A       | Pass*        | Adequate       | *Worst citation case — invented a non-numeric pseudo-ID                                       |
+| 10  | refusal          | flying cars / teleportation pods          | refuse   | N/A       | Pass         | Adequate       | Originally invented a non-numeric pseudo-ID; fixed and re-verified, see Known Limitations     |
 | 11  | refusal          | good motorcycle                           | refuse   | N/A       | Pass         | Good           | Cleanest refusal of the three                                                                 |
 | 12  | ambiguous        | best car                                  | refuse   | Adequate  | Pass         | Good           | Genuine ambiguity, asks clarifying questions                                                  |
 | 13  | ambiguous        | tell me about a good one                  | refuse   | Poor      | Pass         | Adequate       | Honest given vagueness                                                                        |
-| 14  | numeric_boundary | SUV under $36,000                         | generate | Good      | Pass*        | Good           | Faithfulness fix holds under real retrieval; *citation extraction failed (no brackets at all) |
+| 14  | numeric_boundary | SUV under $36,000                         | generate | Good      | Pass         | Good           | Faithfulness fix holds under real retrieval; citation brackets originally missing, now fixed  |
 | 15  | aggregate_stress | cheapest car in database                  | refuse   | Adequate  | Pass         | Good           | Honest — can't guarantee true corpus-wide MIN via top-k retrieval                             |
 
 **Headline results**:
@@ -104,19 +104,16 @@ A separate faithfulness class of bug — the model correctly citing a _real_ car
 
 ## Known Limitations / Future Work
 
-**Citation extraction is unreliable (~3/15 questions), independent of citation _correctness_.** The `[Car ID: <id>]` format is not consistently followed by the generation model:
+**Citation extraction (fixed).** The original eval surfaced three citation-format failures, independent of citation _correctness_: multiple IDs bundled into one bracket (`[Car ID: 2944, 2942, ...]`) getting silently dropped by an extraction regex that only expected one numeric ID per bracket; brackets omitted entirely in one response despite accurate content; and one case that invented a non-numeric pseudo-ID (`[Car ID: 2014-2016 Bentley Flying Spur]`). Fixed with two changes:
 
-- Multiple IDs bundled into one bracket (`[Car ID: 2944, 2942, ...]`) — the extraction regex expects exactly one numeric ID per bracket, so these citations are silently dropped rather than parsed.
-- Brackets omitted entirely in one response, despite the answer content being accurate.
-- One case invented a non-numeric pseudo-ID (`[Car ID: 2014-2016 Bentley Flying Spur]`) — not something a regex fix alone can catch, since it's a format-adherence failure, not a parsing gap.
+- `citations.py`'s extraction regex now captures everything inside `[Car ID: ...]` (not just a single digit sequence) and splits on commas, so bundled numeric IDs are parsed and validated individually instead of being dropped as one unmatched blob. As a side effect, this also makes the citation validator actively catch and strip non-numeric invented IDs, which the old digit-only pattern couldn't even see.
+- The generation and refusal system prompts now include an explicit citation instruction with a concrete example: one numeric ID per bracket, separate brackets for multiple cars (`[Car ID: 2944][Car ID: 2942]`, not comma-bundled), and never invent an ID.
 
-Practical effect: broken/missing citation badges and highlighted car cards in the frontend for these responses, even though the underlying answers were factually accurate in every case observed. This is a UI/attribution-completeness issue, not a correctness or hallucination issue.
+Re-verified directly against the live app (not just unit-level): all three originally-failing questions (Toyota Corolla, flying cars/teleportation pods, SUV under $36,000) now produce correctly-formatted, correctly-extracted citations with zero hallucinated IDs, and two previously-passing questions (Porsche Carrera GT, family SUV) were spot-checked afterward to confirm the prompt change didn't regress anything already working. This was a targeted re-test of the affected questions plus spot-checks, not a full 15-question re-run — the results table above reflects the original full eval with these three rows' status updated to match the fix.
 
-This also exposes a blind spot in the automated faithfulness check: `hallucinated_ids` only evaluates _extracted_ IDs, so when extraction fails outright, the check trivially reports "Pass" without having verified anything. The eval methodology's manual spot-check step was designed to cover exactly this gap, and did — this is the check working as intended, not a check that failed.
+This also exposed a blind spot in the automated faithfulness check that's worth keeping in mind going forward: `hallucinated_ids` only evaluates _extracted_ IDs, so when extraction fails outright it trivially reports "Pass" without having verified anything. The eval methodology's manual spot-check step was designed to cover exactly this gap, and did — this is the check working as intended, not a check that failed.
 
-Logged as a known limitation rather than fixed in this pass. If picked up later, worth trying a more lenient extraction regex (split on commas within a bracket) as a cheap partial fix for the bundled-ID case, though the invented-pseudo-ID case would still need a prompt-level fix.
-
-**Secondary, minor**: Q8 ("luxury sedans") retrieved 5 well-matched, well-cited results but still routed to `refuse` — a threshold-tuning observation, not a bug; the 0.6 confidence cutoff may be marginally conservative for broad-category semantic queries. Not changed in this pass.
+**Secondary, minor, not changed**: Q8 ("luxury sedans") retrieved 5 well-matched, well-cited results but still routed to `refuse` — a threshold-tuning observation, not a bug; the 0.6 confidence cutoff may be marginally conservative for broad-category semantic queries.
 
 ## License
 

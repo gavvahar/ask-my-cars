@@ -5,7 +5,7 @@ from concurrent.futures import TimeoutError as FutureTimeoutError
 from fastapi import APIRouter, HTTPException
 from sqlalchemy.exc import OperationalError as SQLAlchemyOperationalError
 
-from ..rag.citations import CITATION_PATTERN
+from ..rag.citations import extract_citation_ids
 from ..rag.graph import build_graph
 
 router = APIRouter()
@@ -43,7 +43,7 @@ def ask(body: dict):
 
     answer = result.get("answer", "")
     documents = result.get("documents", [])
-    cited_ids = [int(match) for match in CITATION_PATTERN.findall(answer)]
+    cited_ids = [int(match) for match in extract_citation_ids(answer)]
 
     return {
         "answer": answer,
