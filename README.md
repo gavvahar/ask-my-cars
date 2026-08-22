@@ -78,23 +78,23 @@ A separate faithfulness class of bug — the model correctly citing a _real_ car
 
 **Results** (run against the full 11,801-row corpus, live):
 
-| #   | Category         | Question                                  | Route    | Retrieval | Faithfulness | Answer Quality | Notes                                                                                         |
-| --- | ---------------- | ----------------------------------------- | -------- | --------- | ------------ | -------------- | --------------------------------------------------------------------------------------------- |
-| 1   | factual          | 2011 BMW 1 Series M specs                 | generate | Good      | Pass         | Good           | Clean, exact match                                                                            |
-| 2   | factual          | Toyota Corolla                            | generate | Good      | Pass         | Good           | Originally failed multi-ID citation extraction; fixed and re-verified, see Known Limitations  |
-| 3   | factual          | Porsche Carrera GT horsepower             | generate | Good      | Pass         | Good           | Concise, correct (605 HP), well-cited                                                         |
-| 4   | semantic         | reliable family SUV, won't break the bank | generate | Good      | Pass         | Good           | Mitsubishi Outlander, well-cited                                                              |
-| 5   | semantic         | long highway commute                      | refuse   | Adequate  | Pass         | Adequate       | Honest mismatch admission                                                                     |
-| 6   | semantic         | sporty and fast                           | refuse   | Poor      | Pass         | Adequate       | Weak match, honestly hedged                                                                   |
-| 7   | semantic         | practical city car, good gas mileage      | generate | Good      | Pass         | Good           | Honda Insight hybrid                                                                          |
-| 8   | semantic         | luxury sedans                             | refuse   | Good      | Pass         | Good           | 5 real matches — arguably should've generated; threshold-tuning candidate                     |
-| 9   | refusal          | electric scooters                         | refuse   | N/A       | Pass         | Good           | Clean refusal                                                                                 |
-| 10  | refusal          | flying cars / teleportation pods          | refuse   | N/A       | Pass         | Adequate       | Originally invented a non-numeric pseudo-ID; fixed and re-verified, see Known Limitations     |
-| 11  | refusal          | good motorcycle                           | refuse   | N/A       | Pass         | Good           | Cleanest refusal of the three                                                                 |
-| 12  | ambiguous        | best car                                  | refuse   | Adequate  | Pass         | Good           | Genuine ambiguity, asks clarifying questions                                                  |
-| 13  | ambiguous        | tell me about a good one                  | refuse   | Poor      | Pass         | Adequate       | Honest given vagueness                                                                        |
-| 14  | numeric_boundary | SUV under $36,000                         | generate | Good      | Pass         | Good           | Faithfulness fix holds under real retrieval; citation brackets originally missing, now fixed  |
-| 15  | aggregate_stress | cheapest car in database                  | refuse   | Adequate  | Pass         | Good           | Honest — can't guarantee true corpus-wide MIN via top-k retrieval                             |
+| #   | Category         | Question                                  | Route    | Retrieval | Faithfulness | Answer Quality | Notes                                                                                        |
+| --- | ---------------- | ----------------------------------------- | -------- | --------- | ------------ | -------------- | -------------------------------------------------------------------------------------------- |
+| 1   | factual          | 2011 BMW 1 Series M specs                 | generate | Good      | Pass         | Good           | Clean, exact match                                                                           |
+| 2   | factual          | Toyota Corolla                            | generate | Good      | Pass         | Good           | Originally failed multi-ID citation extraction; fixed and re-verified, see Known Limitations |
+| 3   | factual          | Porsche Carrera GT horsepower             | generate | Good      | Pass         | Good           | Concise, correct (605 HP), well-cited                                                        |
+| 4   | semantic         | reliable family SUV, won't break the bank | generate | Good      | Pass         | Good           | Mitsubishi Outlander, well-cited                                                             |
+| 5   | semantic         | long highway commute                      | refuse   | Adequate  | Pass         | Adequate       | Honest mismatch admission                                                                    |
+| 6   | semantic         | sporty and fast                           | refuse   | Poor      | Pass         | Adequate       | Weak match, honestly hedged                                                                  |
+| 7   | semantic         | practical city car, good gas mileage      | generate | Good      | Pass         | Good           | Honda Insight hybrid                                                                         |
+| 8   | semantic         | luxury sedans                             | refuse   | Good      | Pass         | Good           | 5 real matches — arguably should've generated; threshold-tuning candidate                    |
+| 9   | refusal          | electric scooters                         | refuse   | N/A       | Pass         | Good           | Clean refusal                                                                                |
+| 10  | refusal          | flying cars / teleportation pods          | refuse   | N/A       | Pass         | Adequate       | Originally invented a non-numeric pseudo-ID; fixed and re-verified, see Known Limitations    |
+| 11  | refusal          | good motorcycle                           | refuse   | N/A       | Pass         | Good           | Cleanest refusal of the three                                                                |
+| 12  | ambiguous        | best car                                  | refuse   | Adequate  | Pass         | Good           | Genuine ambiguity, asks clarifying questions                                                 |
+| 13  | ambiguous        | tell me about a good one                  | refuse   | Poor      | Pass         | Adequate       | Honest given vagueness                                                                       |
+| 14  | numeric_boundary | SUV under $36,000                         | generate | Good      | Pass         | Good           | Faithfulness fix holds under real retrieval; citation brackets originally missing, now fixed |
+| 15  | aggregate_stress | cheapest car in database                  | refuse   | Adequate  | Pass         | Good           | Honest — can't guarantee true corpus-wide MIN via top-k retrieval                            |
 
 **Headline results**:
 
