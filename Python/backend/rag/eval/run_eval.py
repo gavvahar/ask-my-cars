@@ -1,4 +1,4 @@
-from ..citations import CITATION_PATTERN
+from ..citations import extract_citation_ids
 from ..graph import build_graph
 
 QUESTIONS = [
@@ -26,7 +26,7 @@ def run_eval():
     for category, question in QUESTIONS:
         result = graph.invoke({"question": question})
         answer = result.get("answer", "")
-        cited_ids = CITATION_PATTERN.findall(answer)
+        cited_ids = extract_citation_ids(answer)
 
         print(f"=== [{category}] {question}")
         print(f"route: {result.get('route')}")
